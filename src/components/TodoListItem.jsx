@@ -3,24 +3,19 @@ import {IoMdCheckboxOutline,IoMdRemoveCircleOutline} from "react-icons/io";
 import { MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
 import "./TodoListItem.scss";
 
-const TodoListItem = ({ todo }) => {
-    const { text, checked } = todo;
-    console.log(checked);
+const TodoListItem = ({ todo, onRemove, onToggle }) => {
+  const { text, checked, id } = todo;
   return (
     <div className="todolist_item">
-      <div className={`checkbox ${checked ? "checked": ""}`}>
-        {checked ? (
-            <IoMdCheckboxOutline />
-        ) : (
-            <MdOutlineCheckBoxOutlineBlank />
-        )}
+      <div className={`checkbox ${checked ? "checked" : ""}`} onClick={() => onToggle(id)}>
+        {checked ? <IoMdCheckboxOutline /> : <MdOutlineCheckBoxOutlineBlank />}
         <div className="text">{text}</div>
       </div>
-      <div className="remove">
+      <div className="remove" onClick={() => onRemove(id)}>
         <IoMdRemoveCircleOutline />
       </div>
     </div>
   );
-}
+};
 
 export default TodoListItem
