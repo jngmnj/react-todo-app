@@ -1,4 +1,4 @@
-import { useCallback, useReducer, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import TodoTemplate from './components/TodoTemplate'
 import TodoInsert from './components/TodoInsert'
 import TodoList from './components/TodoList'
@@ -14,27 +14,11 @@ const createBulkTodos = () => {
   }
   return array;
 }
-const todoReducer = (todos, action) => {
-  switch (action.type) {
-    case "INSERT":
-      return todos.concat(action.todo);
-    case "REMOVE":
-      return todos.filter((todo) => todo.id !== action.id);
-    case "TOGGLE":
-      return todos.map((todo) =>
-        todo.id === action.id ? { ...todo, checked: !todo.checked } : todo
-      );
-    default:
-      return todos;
-  }
-};
 
 function App() {
-  const [todos, dispatch] = useReducer(todoReducer, undefined, createBulkTodos);
-  // undefined: 초기상태
-  // 세번째 인자로 createBulkTodos 넣으면 처음 렌더링될때만 호출됨
+  const [todos, setTodos] = useState(createBulkTodos);
 
-  const nextId = useRef(2501);
+  const nextId = useRef(4);
 
   const onInsert = useCallback(
     text => {
@@ -43,22 +27,30 @@ function App() {
         text,
         checked: false,
       };
-      dispatch({type: 'INSERT', todo});
+      // setTodos(todos.concat(todo));
+      setTodos(todos => todos.concat(todo)); // 함수형 업데이트
       nextId.current += 1;
     },
-    [], 
+    // [todos],
+    [], // useState에서 함수형업데이트를 해줬기때문에 빈배열 dependency
   )
   
   const onRemove = useCallback(
     (id) => {
-      dispatch({type: 'REMOVE', id})
+      // setTodos(todos.filter(todo => todo.id !== id));
+      setTodos(todos => todos.filter(todo => todo.id !== id));
     },
     [],
   )
   
   const onToggle = useCallback(
     (id) => {
-      dispatch({type: 'TOGGLE', id})
+      setTodos(
+        todos => 
+        todos.map(todo => (
+          todo.id === id ? {...todo, checked: !todo.checked } : todo
+        ))
+      )
     },
     [],
   )
